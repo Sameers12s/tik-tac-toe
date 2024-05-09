@@ -1,24 +1,33 @@
 import React, { useState } from 'react';
 import Button from '../components/Button';
 import { Functionality } from '../api/Functionality';
-
+import Popup from '../components/Popup';
 
 const Home = () => {
     const [count, setCount] = useState(0);
     const [lock, setLock] = useState(false);
     const [data, setData] = useState(Array(9).fill(""));
     const [winner, setWinner] = useState(null);
+    const [showPopup, setShowPopup] = useState(false); // Initialize with false
 
     const handleClick = (num) => {
-        Functionality(num, count, lock, data, setData, setCount, setLock, setWinner);
+        Functionality(num, count, lock, data, setData, setCount, setLock, setWinner, handleWinnerPopup);
+    };
+
+    const handleWinnerPopup = (winner) => {
+        setWinner(winner);
+        setShowPopup(true);
+        setLock(true);
     };
 
     const resetGame = () => {
         setData(Array(9).fill(""));
         setCount(0);
         setLock(false);
+        setShowPopup(false);
         setWinner(null);
     };
+
 
     return (
         <div>
@@ -42,11 +51,7 @@ const Home = () => {
                 <Button className="box" onClick={() => handleClick(8)} buttonText={data[8]} />
             </div>
 
-            {winner && (
-                <div className="text-center text-2xl mt-4">
-                    Winner: {winner}
-                </div>
-            )}
+            {winner && <Popup winner={winner} onClose={resetGame} />}
 
             <div className='flex justify-center items-center mt-10'>
                 <button className='btn btn-success size-20 w-40 rounded-full text-2xl' onClick={resetGame}>Reset</button>
